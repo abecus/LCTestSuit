@@ -94,14 +94,3 @@ def getContents(problemName='two sum'):
         return None
     
     return filteredDict
-
-
-#%%
-# what we want
-# content = 'content'
-# soup = BeautifulSoup(data['data']['question'][content], 'lxml')
-
-# #%%
-# title = data['data']['question']['title']
-# question =  soup.get_text().replace('\n',' ')
-# print(title, '\n', question)

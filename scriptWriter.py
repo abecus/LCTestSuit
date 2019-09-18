@@ -45,7 +45,7 @@ def __definition(s):
     return l.replace('self, ', ''), attr, defName
 
 
-def writeFile(ProblemName, language='Python3'):
+def __quesToText(ProblemName, language='Python3', forWhat="write"):
     extensions = {'Python3':'.py',
                   'cpp': '.cpp'
                   }
@@ -59,51 +59,71 @@ def writeFile(ProblemName, language='Python3'):
     questionId = raw['questionFrontendId']
     fileName = raw['title'].split(' ')+[questionId]+[extensions[language]]
     fileName[0]=fileName[0].lower()
-    fileName = ''.join(fileName)
     
-    # getting other parts of script file
+    # preprocessing for future calls (dependent variables) e.g. accRate depends on stats
     codeSnippets_raw = [i['code'] for i in raw['codeSnippets'] if i['lang']==language][0]
-    meta_def = codeSnippets_raw.split('class Solution:\n')[0]
-    definition, attrs, funcName = __definition(codeSnippets_raw.split('\n')[-2].strip(' '))
-        
     stats = __strToObject(raw['stats'])
-    content = __prettifyContent(raw['content'])   
-    
     topicTags = set(i['name'] for i in raw['topicTags'])
-    sampleTestCase = raw['sampleTestCase'].split('\n')
     solution = 'Available' if raw['solution'] else None
-    similarQuestions =  [(i['title'], i["difficulty"]) for i in __strToObject(raw['similarQuestions'])]
     
-    path = "problems/"+fileName
-    with open(path, 'w') as f:
-        f.write("\"\"\"\n")
-        
-        # title and id
-        f.write('_'*25+ questionId+'. '+raw['title']+'_'*25+'\n')
-        
-        # metadata and solution
-        f.write("Difficulty: "+ raw['difficulty']+\
+    # main sections are created here
+    similarQuestions =  [(i['title'], i["difficulty"]) for i in __strToObject(raw['similarQuestions'])]
+    sampleTestCase = raw['sampleTestCase'].split('\n')
+    definition, attrs, funcName = __definition(codeSnippets_raw.split('\n')[-2].strip(' '))
+    fileName = ''.join(fileName)
+    titleAndId = '_'*25+ questionId+'. '+raw['title']+'_'*25+'\n'
+    meta_def = codeSnippets_raw.split('class Solution:\n')[0]
+    content = __prettifyContent(raw['content'])   
+    metaData = "Difficulty: "+ raw['difficulty']+\
                 "\t\tLikes: "+ str(raw["likes"])+\
                 "\t\tDislikes: "+ str(raw['dislikes']) +\
                 "\t\tSolution: "+ str(solution)+\
-                '\n')
-        
-        # acceptance rates
-        f.write('Total Accepted: '+stats['totalAccepted']+\
+                '\n'
+    accRate = 'Total Accepted: '+stats['totalAccepted']+\
                 '\t\tTotal Submission: '+stats['totalSubmission']+\
-                '\t\tAcceptance Rate: '+stats['acRate']+'\n')
+                '\t\tAcceptance Rate: '+stats['acRate']+'\n'
+    tags =  'Tags:  '+', '.join(i for i in topicTags)+'\n'
+
+    if forWhat == 'write':
+        return fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
+                definition, attrs, sampleTestCase, funcName, similarQuestions
+    else:
+        return titleAndId, metaData, accRate, tags, content, meta_def,\
+                definition, attrs, sampleTestCase, funcName, similarQuestions
+
+def writeFile(problemName, language='Python3', path='problems/', separate=False):
+    fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
+    definition, attrs, sampleTestCase, funcName, similarQuestions = \
+        __quesToText(problemName, language)
+      
+    path = path+fileName
+    with open(path, 'w') as f:
         
-        # tags type
-        f.write('Tags:  '+', '.join(i for i in topicTags)+'\n')
-        f.write('\n\n')
         
-        # contents
-        f.write(content)
-        f.write("\"\"\"\n\n\n")
-        
+        # if user just want to solve problem not with definition
+        if not separate:
+            f.write("\"\"\"\n")
+            
+            # title and id
+            f.write(titleAndId)
+            
+            # metadata and solution
+            f.write(metaData)
+            
+            # acceptance rates
+            f.write(accRate)
+            
+            # tags type
+            f.write(tags)
+            f.write('\n\n')
+            
+            # contents
+            f.write(content)
+            f.write("\"\"\"\n\n\n")
+            
         # Code Snippet
         if meta_def:
-            f.write(meta_def+'\n')
+            f.write(meta_def+'\n')    
         f.write(definition+'\n'*7)
         
         # testFunction
@@ -120,14 +140,45 @@ def writeFile(ProblemName, language='Python3'):
         f.write('\n'*3)
         
         # Similar Questions
-        f.write("\"\"\"\n")
-        if similarQuestions:
-            f.write('similarQuestions::\n')
-            for q, d in similarQuestions:
-                f.write('\t\t'+q + ': '+ d+'\n')
-        f.write("\"\"\"\n")
+        if not separate:
+            f.write("\"\"\"\n")
+            if similarQuestions:
+                f.write('similarQuestions::\n')
+                for q, d in similarQuestions:
+                    f.write('\t\t'+q + ': '+ d+'\n')
+            f.write("\"\"\"\n")
+        
     print('File has been created, at '+ '\"'+path+'\"')
 
-
-name = idToName(931)
-writeFile(name)
+def display(problemName, language='Python3'):
+    titleAndId, metaData, accRate, tags, content, meta_def,\
+    definition, attrs, sampleTestCase, funcName, similarQuestions = \
+        __quesToText(problemName, language, forWhat='show')
+      
+    print("\"\"\"\n")
+        
+    # title and id
+    print(titleAndId)
+        
+    # metadata and solution
+    print(metaData)
+        
+    # acceptance rates
+    print(accRate)
+        
+    # tags type
+    print(tags)
+    print('\n\n')
+        
+    # contents
+    print(content)
+    # print('\n')
+        
+    # Similar Questions
+    if similarQuestions:
+        print('similarQuestions::\n')
+        for q, d in similarQuestions:
+            print('\t\t'+q + ': '+ d+'\n')
+    print("\"\"\"\n")
+    
+# display('two sum', language='Python3')

@@ -91,7 +91,7 @@ def __quesToText(ProblemName, language='Python3', forWhat="write"):
         return titleAndId, metaData, accRate, tags, content, meta_def,\
                 definition, attrs, sampleTestCase, funcName, similarQuestions
 
-def writeFile(problemName, language='Python3', path='problems/', separate=False):
+def writeFile(problemName, language='Python3', path='C:\\Users\\ABDUL BASID\\Desktop\\AI\\ml\\DS-and-Algorithms\\problems\\leetcode\\', separate=False):
     fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
     definition, attrs, sampleTestCase, funcName, similarQuestions = \
         __quesToText(problemName, language)

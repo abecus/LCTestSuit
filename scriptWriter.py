@@ -1,4 +1,5 @@
 from utils.utils import *
+import os.path
 
 
 def __prettifyContent(content):
@@ -44,12 +45,11 @@ def __definition(s):
     l = "".join((l, ':'))
     return l.replace('self, ', ''), attr, defName
 
-
 def __quesToText(ProblemName, language='Python3', forWhat="write"):
     extensions = {'Python3':'.py',
-                  'cpp': '.cpp'
+                  'C++': '.cpp'
                   }
-    raw = getContents(ProblemName)
+    raw = getContents(ProblemName) # get all raw contents to be displayed or written
 
     if not raw:
         print("No changes has been made")
@@ -91,15 +91,25 @@ def __quesToText(ProblemName, language='Python3', forWhat="write"):
         return titleAndId, metaData, accRate, tags, content, meta_def,\
                 definition, attrs, sampleTestCase, funcName, similarQuestions
 
-def writeFile(problemName, language='Python3', path='C:\\Users\\ABDUL BASID\\Desktop\\AI\\ml\\DS-and-Algorithms\\problems\\leetcode\\', separate=False):
+def writeFile(problemName, language, path, separate=False):
     fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
     definition, attrs, sampleTestCase, funcName, similarQuestions = \
         __quesToText(problemName, language)
       
     path = path+fileName
+    
+    if os.path.exists(path):
+        print("""Warning: File Already exists on same path""")
+        while True:
+            user = input("Do You Want To Continue replacing File\n (Yes or y or 1 / No or 0 or n): ")
+            if user=='1' or user=='Yes' or user=='yes':
+                break
+            if user=='0' or user=='No' or user=='no':
+                print('\nNo Files has been created')
+                return 0
+                
+        
     with open(path, 'w') as f:
-        
-        
         # if user just want to solve problem not with definition
         if not separate:
             f.write("\"\"\"\n")
@@ -116,11 +126,14 @@ def writeFile(problemName, language='Python3', path='C:\\Users\\ABDUL BASID\\Des
             # tags type
             f.write(tags)
             f.write('\n\n')
-            
+    
+    with open(path, 'ab') as f:
+        if not separate:
             # contents
-            f.write(content)
-            f.write("\"\"\"\n\n\n")
-            
+            f.write(content.encode('utf-8'))
+            f.write("\"\"\"\n\n\n".encode('utf-8'))
+    
+    with open(path, 'a') as f:       
         # Code Snippet
         if meta_def:
             f.write(meta_def+'\n')    
@@ -150,10 +163,10 @@ def writeFile(problemName, language='Python3', path='C:\\Users\\ABDUL BASID\\Des
         
     print('File has been created, at '+ '\"'+path+'\"')
 
-def display(problemName, language='Python3'):
+def display(problemName):
     titleAndId, metaData, accRate, tags, content, meta_def,\
     definition, attrs, sampleTestCase, funcName, similarQuestions = \
-        __quesToText(problemName, language, forWhat='show')
+        __quesToText(problemName, forWhat='show')
       
     print("\"\"\"\n")
         
@@ -181,4 +194,4 @@ def display(problemName, language='Python3'):
             print('\t\t'+q + ': '+ d+'\n')
     print("\"\"\"\n")
     
-# display('two sum', language='Python3')
+# display('two sum')

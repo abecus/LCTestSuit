@@ -1,7 +1,7 @@
 # LCTestSuit
 A LeetCode Test Suit for offline Debugging and for Autocomplete
 
-Automatically files get created with the specified file extension for solving the problem.
+Automatically Script files get created with the specified file extension along with problem statement, metadata and functions defination  and testcase for solving LeetCode problems.
 
 
 
@@ -20,5 +20,6 @@ Automatically files get created with the specified file extension for solving th
 
               py -3.x -m main.py -s -i 100
 
+run build/main.exe directly from command line e.g.      ```main.exe -w -i 100```
 
 Change the programming language for file creation and function from scriptWriter.py in each function default is Python3

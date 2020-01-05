@@ -18,10 +18,9 @@ Automatically Script files get created with the specified file extension along w
 
         optional arguments:
           -h, --help  show this help message and exit
-          -w {0,1,2}  0: Create Script File with problem statement and function at the
-                      specified path, 1: Create file with function, and saperately
-                      problem statement on terminal, 2: Display problem statement on
-                      terminal
+          -w {0,1,2}  0: Create Script File with problem statement and function at the specified path, 
+                      1: Create file with function, and saperately problem statement on terminal, 
+                      2: Display problem statement on terminal
           -sp PATH    Set path to directory were file should be created
           -p PROBLEM  Problem name or Problem index/number
 

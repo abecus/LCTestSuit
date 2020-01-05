@@ -20,9 +20,34 @@ def __findAttr(s, i):
         i-=1
     return l[::-1]
 
-def __definition(s):
-    """extracts def line with no extra definitions or types
+def __pyDefinition(s):
+    """extracts def line with no extra definitions or types for Python
     unlike how leetcode does"""
+    l = ''
+    attr = [] 
+    i=0
+    length = len(s)
+    while i<length and i!=')':
+        if s[i]=='(':   defName = __findAttr(s, i) # get func name
+            
+        if s[i]==':':
+            # get a attribute form going back-ward
+            attr.append(__findAttr(s, i))
+            
+            while s[i]!="," and s[i]!=')':
+                i+=1
+                if i>=length:   break
+                
+        l = "".join((l, s[i]))
+        if s[i]==')': break
+        i+=1
+        
+    l = "".join((l, ':'))
+    return l.replace('self, ', ''), attr, defName
+
+def __CppDefinition(s):
+    """solution class def line"""
+    # TODO above for cpp
     l = ''
     attr = [] 
     i=0
@@ -69,7 +94,7 @@ def __quesToText(ProblemName, language='Python3', forWhat="write"):
     # main sections are created here
     similarQuestions =  [(i['title'], i["difficulty"]) for i in __strToObject(raw['similarQuestions'])]
     sampleTestCase = raw['sampleTestCase'].split('\n')
-    definition, attrs, funcName = __definition(codeSnippets_raw.split('\n')[-2].strip(' '))
+    definition, attrs, funcName = __pyDefinition(codeSnippets_raw.split('\n')[-2].strip(' '))
     fileName = ''.join(fileName)
     titleAndId = '_'*25+ questionId+'. '+raw['title']+'_'*25+'\n'
     meta_def = codeSnippets_raw.split('class Solution:\n')[0]

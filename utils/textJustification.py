@@ -14,7 +14,7 @@ def textJustification(text, lineWidth=80):
 		# from index x to y inclusive
 		if x==0:	lw = accLength[y]+y-x
 		else:	lw = accLength[y]-accLength[x-1]+y-x
-		return float('inf') if lw>lineWidth else (lineWidth-lw)**2
+		return float('inf') if lw>lineWidth else (lineWidth-lw)**3
 	
 	dp=[[float("inf")]*n for _ in range(n)]
 

@@ -1,11 +1,27 @@
 from utils.utils import *
+from utils.textJustification import textJustification
 import os.path
+from itertools import islice
 
+
+def __prettifyExamples(examples):
+    for line in examples.split("\n"):
+        line.strip()
+        if line and line[0].isupper():
+            if "Example" in line:   yield "\n"+line
+            elif line.find(":")<10: yield line+"\n"
+        else:   yield line
+
+def __justifycontent(content):
+    startIdx = content.find("Example")
+    return "\n".join(textJustification(content[:startIdx].replace("\n", " "),
+                        lineWidth=80)) + "\n\n" + \
+                        "".join(__prettifyExamples(content[startIdx:]))+"\n"
 
 def __prettifyContent(content):
     # returns html without tags with indentation
     soup = BeautifulSoup(content, 'html.parser').text
-    return soup
+    return __justifycontent(soup)
 
 def __strToObject(string):
     # evaluates the string to python object
@@ -126,13 +142,12 @@ def writeFile(problemName, language, path, separate=False):
     if os.path.exists(path):
         print("""Warning: File Already exists on same path""")
         while True:
-            user = input("Do You Want To Continue replacing File\n (Yes or y or 1 / No or 0 or n): ")
+            user = input("Do You Want To Continue replacing File\n (Yes or yes or 1 / No or no or 1): ")
             if user=='1' or user=='Yes' or user=='yes':
                 break
             if user=='0' or user=='No' or user=='no':
                 print('\nNo Files has been created')
                 return 0
-                
         
     with open(path, 'w') as f:
         # if user just want to solve problem not with definition
@@ -219,4 +234,11 @@ def display(problemName):
             print('\t\t'+q + ': '+ d+'\n')
     print("\"\"\"\n")
     
-# display('two sum')
+    
+if __name__ == "__main__":
+    display('same tree')
+    # __quesToText("word break")
+    # __quesToText("rectangle area")
+    # __quesToText("same tree")
+    # __quesToText("two sum")
+    pass

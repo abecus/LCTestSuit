@@ -142,7 +142,7 @@ def writeFile(problemName, language, path, separate=False):
     if os.path.exists(path):
         print("""Warning: File Already exists on same path""")
         while True:
-            user = input("Do You Want To Continue replacing File\n (Yes or yes or 1 / No or no or 1): ")
+            user = input("Do You Want To Continue replacing File\n (Yes or yes or 1 / No or no or 0): ")
             if user=='1' or user=='Yes' or user=='yes':
                 break
             if user=='0' or user=='No' or user=='no':

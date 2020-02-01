@@ -1,5 +1,6 @@
-from scriptWriter import *
+from utils.scriptWriter import *
 import sys, argparse
+
 
 langs = ["C++", "Java", "Python", "Python3", "C", "C#", "JavaScript","Ruby", "Swift", "Go", "Scala", "Kotlin", "Rust", "PHP"]
 
@@ -48,6 +49,7 @@ args = parser.parse_args()
 
 def cli():
 	path = "C:\\Users\ABDUL BASID\Desktop\AI\ml\DS-and-Algorithms\problems\leetcode\\"
+	# path = "C:\\Users\ABDUL BASID\Desktop\AI\LCTestSuit\problems\\"
 	if args.path!=None:	path = args.path
 
 	errorMassage = """FatalError: The problem is Paid or No problem exist with given index/name"""

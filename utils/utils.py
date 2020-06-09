@@ -1,4 +1,5 @@
 #%%
+from alive_progress import alive_bar
 import re
 import lxml
 import requests
@@ -19,7 +20,10 @@ def nameParser(problemName):
     lowers the alphabets and replaces non alphanumerics to '-'
     """
     # this is how leet-code stores the name of problems
-    return re.sub('[^0-9a-zA-Z]+', '-', problemName.lower().strip())
+    problemName = re.sub('[^0-9a-zA-Z]+', '-', problemName.lower().strip())
+    if not problemName[-1].isalnum():
+        return problemName[:-1]
+    return problemName
 
 def getData(query):
     """
@@ -76,6 +80,7 @@ def idToName(problemId):
     
 #%%
 def getContents(problemName='two sum'):
+    # print(problemName)
     """
     #### itype: string (Question Name)
     #### rtype: None (py file with contents (problem description) written on it)
@@ -83,14 +88,25 @@ def getContents(problemName='two sum'):
     if Question is not a paid question then the file will be created
     else no file will be created 
     """
-    problemName = nameParser(problemName)
-    query = questionDataQuery(problemName)
-    raw = getData(query)
-    filteredDict = raw['data']['question']
-    # print(filteredDict)
-    
-    if filteredDict['isPaidOnly']:
-        print('PaidContaint: Can not get problem description')
-        return None
-    
-    return filteredDict
+    rawName = problemName
+    with alive_bar(3) as bar:
+        bar(f"Searching Problem: {rawName}...")
+        problemName = nameParser(problemName)
+        bar(f"Searched Problem: {problemName}")
+        
+        query = questionDataQuery(problemName)
+        raw = getData(query)
+
+        if "errors" in raw:
+            bar("Didn't Got Contents Successfully")
+            print("No problem exist with given index/name, Try Changing Index to Name (Taken from url)")
+            return None
+        
+        filteredDict = raw['data']['question']
+        if 'isPaidOnly' in filteredDict and filteredDict['isPaidOnly']:
+            bar("Didn't Got Contents Successfully")
+            print('PaidContaint: Can not get problem description')
+            return None
+        
+        bar("Got Contents Successfully")
+        return filteredDict

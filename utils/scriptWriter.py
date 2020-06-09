@@ -34,11 +34,13 @@ def __findAttr(s, i):
     while s[i]!=" ":
         l = "".join((l, s[i]))
         i-=1
+    # print(l)
     return l[::-1]
 
 def __pyDefinition(s):
-    """extracts def line with no extra definitions or types for Python
+    """extracts def line with no extra types hints or types for Python
     unlike how leetcode does"""
+    # print(s)
     l = ''
     attr = [] 
     i=0
@@ -59,7 +61,7 @@ def __pyDefinition(s):
         i+=1
         
     l = "".join((l, ':'))
-    return l.replace('self, ', ''), attr, defName
+    return l, attr, defName
 
 def __CppDefinition(s):
     """solution class def line"""
@@ -90,65 +92,83 @@ def __quesToText(ProblemName, language='Python3', forWhat="write"):
     extensions = {'Python3':'.py',
                   'C++': '.cpp'
                   }
-    raw = getContents(ProblemName) # get all raw contents to be displayed or written
 
+    raw = getContents(ProblemName) # get all raw contents to be displayed or written
     if not raw:
         print("No changes has been made")
         return
 
-    # getting file name for script file
-    questionId = raw['questionFrontendId']
-    fileName = raw['title'].split(' ')+[questionId]+[extensions[language]]
-    fileName[0]=fileName[0].lower()
-    
-    # preprocessing for future calls (dependent variables) e.g. accRate depends on stats
-    codeSnippets_raw = [i['code'] for i in raw['codeSnippets'] if i['lang']==language][0]
-    stats = __strToObject(raw['stats'])
-    topicTags = set(i['name'] for i in raw['topicTags'])
-    solution = 'Available' if raw['solution'] else None
-    
-    # main sections are created here
-    similarQuestions =  [(i['title'], i["difficulty"]) for i in __strToObject(raw['similarQuestions'])]
-    sampleTestCase = raw['sampleTestCase'].split('\n')
-    definition, attrs, funcName = __pyDefinition(codeSnippets_raw.split('\n')[-2].strip(' '))
-    fileName = ''.join(fileName)
-    titleAndId = '_'*25+ questionId+'. '+raw['title']+'_'*25+'\n'
-    meta_def = codeSnippets_raw.split('class Solution:\n')[0]
-    content = __prettifyContent(raw['content'])   
-    metaData = "Difficulty: "+ raw['difficulty']+\
-                "\t\tLikes: "+ str(raw["likes"])+\
-                "\t\tDislikes: "+ str(raw['dislikes']) +\
-                "\t\tSolution: "+ str(solution)+\
-                '\n'
-    accRate = 'Total Accepted: '+stats['totalAccepted']+\
-                '\t\tTotal Submission: '+stats['totalSubmission']+\
-                '\t\tAcceptance Rate: '+stats['acRate']+'\n'
-    tags =  'Tags:  '+', '.join(i for i in topicTags)+'\n'
+    with alive_bar(6) as bar:    
+        bar("Processign Data") 
+        # getting file name for script file
+        questionId = raw['questionFrontendId']
+        fileName = raw['title'].split(' ')+[questionId]+[extensions[language]]
+        fileName[0]=fileName[0].lower()
+        
+        bar("Processign Data") 
+        # preprocessing for future calls (dependent variables) e.g. accRate depends on stats
+        codeSnippets_raw = [i['code'] for i in raw['codeSnippets'] if i['lang']==language][0]
+        stats = __strToObject(raw['stats'])
+        topicTags = set(i['name'] for i in raw['topicTags'])
+        solution = 'Available' if raw['solution'] else None
+        
+        bar("Processign Data") 
+        # main sections are created here
+        similarQuestions =  [(i['title'], i["difficulty"]) for i in __strToObject(raw['similarQuestions'])]
+        sampleTestCase = raw['sampleTestCase'].split('\n')
+        
+        # print("\n".join(codeSnippets_raw.split('\n')[:-2]))
+        # definition, attrs, funcName = __pyDefinition(codeSnippets_raw.split('\n')[-2].strip(' '))
+        # definition = "\n".join(codeSnippets_raw.split('\n')[:-2]) + "\n\t" + definition
+        definition=codeSnippets_raw
+        
+        bar("Processign Data") 
+        fileName = ''.join(fileName)
+        titleAndId = '_'*25+ questionId+'. '+raw['title']+'_'*25+'\n'
+        meta_def = codeSnippets_raw.split('class Solution:\n')[0]
+        
+        bar("Processign Data")
+        content = __prettifyContent(raw['content'])  
+         
+        metaData = "Difficulty: "+ raw['difficulty']+\
+                    "\t\tLikes: "+ str(raw["likes"])+\
+                    "\t\tDislikes: "+ str(raw['dislikes']) +\
+                    "\t\tSolution: "+ str(solution)+\
+                    '\n'
+        accRate = 'Total Accepted: '+stats['totalAccepted']+\
+                    '\t\tTotal Submission: '+stats['totalSubmission']+\
+                    '\t\tAcceptance Rate: '+stats['acRate']+'\n'
+        tags =  'Tags:  '+', '.join(i for i in topicTags)+'\n'
 
-    if forWhat == 'write':
-        return fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
-                definition, attrs, sampleTestCase, funcName, similarQuestions
-    else:
-        return titleAndId, metaData, accRate, tags, content, meta_def,\
-                definition, attrs, sampleTestCase, funcName, similarQuestions
+        bar("Processign Data")        
+        if forWhat == 'write':
+            return fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
+                    definition, sampleTestCase, similarQuestions
+        else:
+            return titleAndId, metaData, accRate, tags, content, meta_def,\
+                    definition, sampleTestCase, similarQuestions
 
 def writeFile(problemName, language, path, separate=False):
-    fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
-    definition, attrs, sampleTestCase, funcName, similarQuestions = \
-        __quesToText(problemName, language)
-      
+    try:
+        fileName, titleAndId, metaData, accRate, tags, content, meta_def,\
+        definition, sampleTestCase, similarQuestions = \
+            __quesToText(problemName, language)
+    except:
+        return
+    
     path = path+fileName
     
     if os.path.exists(path):
-        print("""Warning: File Already exists on same path""")
+        print("""\nWarning: File Already exists on same path""")
         while True:
             user = input("Do You Want To Continue replacing File\n (Yes or yes or 1 / No or no or 0): ")
             if user=='1' or user=='Yes' or user=='yes':
                 break
+            
             if user=='0' or user=='No' or user=='no':
-                print('\nNo Files has been created')
+                print('\nNo Files have been created')
                 return 0
-        
+                
     with open(path, 'w') as f:
         # if user just want to solve problem not with definition
         if not separate:
@@ -175,21 +195,25 @@ def writeFile(problemName, language, path, separate=False):
     
     with open(path, 'a') as f:       
         # Code Snippet
-        if meta_def:
-            f.write(meta_def+'\n')    
-        f.write(definition+'\n'*7)
+        # if meta_def:
+        #     f.write(meta_def+'\n') 
+        
+        f.write("import functools, itertools, operator, bisect, array \n\n")
+        
+        f.write(definition+'\n'*3)
         
         # testFunction
         f.write("if __name__ == \"__main__\":\n")
+        f.write("\tpass")
         
         # test case
-        for var, val in zip(attrs, sampleTestCase):
-            f.write('\t'+var+" = "+val+'\n')
+        # for var, val in zip(attrs, sampleTestCase):
+        #     f.write('\t'+var+" = "+val+'\n')
             
-        f.write('\tprint('+funcName+'(')
-        for attr in attrs:
-            f.write(attr + ",")
-        f.write(')'+')')
+        # f.write('\tprint('+funcName+'(')
+        # for attr in attrs:
+        #     f.write(attr + ",")
+        # f.write(')'+')')
         f.write('\n'*3)
         
         # Similar Questions
@@ -200,14 +224,17 @@ def writeFile(problemName, language, path, separate=False):
                 for q, d in similarQuestions:
                     f.write('\t\t'+q + ': '+ d+'\n')
             f.write("\"\"\"\n")
-        
+    
     print('File has been created, at '+ '\"'+path+'\"')
 
 def display(problemName):
-    titleAndId, metaData, accRate, tags, content, meta_def,\
-    definition, attrs, sampleTestCase, funcName, similarQuestions = \
-        __quesToText(problemName, forWhat='show')
-      
+    try:
+        titleAndId, metaData, accRate, tags, content, meta_def,\
+        definition, sampleTestCase, similarQuestions = \
+            __quesToText(problemName, forWhat='show')
+    except:
+        return 
+    
     print("\"\"\"\n")
         
     # title and id
@@ -233,7 +260,7 @@ def display(problemName):
         for q, d in similarQuestions:
             print('\t\t'+q + ': '+ d+'\n')
     print("\"\"\"\n")
-    
+        
     
 if __name__ == "__main__":
     display('same tree')

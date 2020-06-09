@@ -59,19 +59,15 @@ def cli():
 
 	if args.writeType==0:
 		# to just write on file
-		try:	writeFile(args.problem, path=path, language=lang)
-		except:	print(errorMassage)
-
+		writeFile(args.problem, path=path, language=lang)
+  
 	elif args.writeType==1:
 		# for separate creation and display of problem statement and function creation
-		try:
-			display(args.problem,)
-			writeFile(args.problem, path=path, language=lang, separate=True)
-		except:	print(errorMassage)
+		display(args.problem,)
+		writeFile(args.problem, path=path, language=lang, separate=True)
 				
 	elif args.writeType==2:
 		# to just display on screen
-		try:	display(args.problem)
-		except:	print(errorMassage)
+		display(args.problem)
 
 cli()

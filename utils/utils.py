@@ -90,9 +90,9 @@ def getContents(problemName='two sum'):
     """
     rawName = problemName
     with alive_bar(3) as bar:
-        bar(f"Searching Problem: {rawName}...")
+        bar(f"Searching with {rawName}...")
         problemName = nameParser(problemName)
-        bar(f"Searched Problem: {problemName}")
+        bar(f"Found {problemName}!")
         
         query = questionDataQuery(problemName)
         raw = getData(query)

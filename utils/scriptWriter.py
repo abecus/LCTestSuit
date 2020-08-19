@@ -18,9 +18,9 @@ def __prettifyExamples(examples):
 
 def __justifycontent(content):
     startIdx = content.find("Example")
-    return "\n".join(textJustification(content[:startIdx].replace("\n", " "),
-                                       lineWidth=80)) + "\n\n" + \
-        "".join(__prettifyExamples(content[startIdx:]))+"\n"
+    return "\n".join(
+        "\n".join(textJustification(s, 80)) for s in content[:startIdx].split("\n")) + \
+        "\n\n" + " ".join(__prettifyExamples(content[startIdx:]))+"\n"
 
 
 def __prettifyContent(content):

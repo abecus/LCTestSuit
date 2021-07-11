@@ -1,10 +1,10 @@
 def questionDataQuery(problemName):
     """
     #### itype: string (Question Name, formate: all lowercase and spaces replaced with '-')
-    
+
     #### rtype: json formated query
     """
-    
+
     Query = {
         "operationName": "questionData",
         "variables": {"titleSlug": problemName},
@@ -33,8 +33,7 @@ def questionDataQuery(problemName):
         sampleTestCase
     }
     }
-    """
+    """,
     }
 
     return Query
-    

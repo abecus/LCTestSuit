@@ -1,7 +1,5 @@
-questionNamesQuery = {
-    "operationName": "allQuestions",
-    "variables": {},
-    "query": """query allQuestions {
+_query = """
+        query allQuestions {
   allQuestions {
     ...questionSummaryFields
   }
@@ -14,17 +12,20 @@ fragment questionSummaryFields on QuestionNode {
   isPaidOnly
 }
 """
+questionNamesQuery = {
+    "operationName": "allQuestions",
+    "variables": {},
+    "query": _query
 }
 
-
-# {'data': 
+# {'data':
 #   {'allQuestions':
 #     [
 #       {'title': 'Two Sum',
 #       'questionFrontendId': '1',
 #       'difficulty': 'Easy',
 #       'isPaidOnly': False},
-     
+
 #       {'title': 'Add Two Numbers',
 #     'questionFrontendId': '2',
 #     'difficulty': 'Medium',

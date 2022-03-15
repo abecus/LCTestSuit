@@ -10,8 +10,8 @@ Automatically Script files get created with the specified file extension along w
 
                         example:
 
-                                py -w 0 -p 100
-                                py -w 1 -p same-tree
+                                py main.py -w 0 -p 100
+                                py main.py -w 1 -p same-tree
 
 
         A program for solving leetcode problems offline with various options.
